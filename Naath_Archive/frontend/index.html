@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Naath Archive Frontend</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold text-center mb-8">Naath Archive</h1>
+        
+        <div class="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-semibold mb-4">Authentication</h2>
+            
+            <div class="mb-4">
+                <h3 class="font-medium mb-2">Register</h3>
+                <form id="registerForm" class="space-y-2">
+                    <input type="text" id="username" placeholder="Username" class="w-full p-2 border rounded">
+                    <input type="email" id="email" placeholder="Email" class="w-full p-2 border rounded">
+                    <input type="password" id="password" placeholder="Password" class="w-full p-2 border rounded">
+                    <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
+                        Register
+                    </button>
+                </form>
+            </div>
+
+            <div>
+                <h3 class="font-medium mb-2">Login</h3>
+                <form id="loginForm" class="space-y-2">
+                    <input type="text" id="loginUsername" placeholder="Username" class="w-full p-2 border rounded">
+                    <input type="password" id="loginPassword" placeholder="Password" class="w-full p-2 border rounded">
+                    <button type="submit" class="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600">
+                        Login
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000/api/auth/';
+        
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const response = await fetch(API_BASE + 'register/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: document.getElementById('username').value,
+                    email: document.getElementById('email').value,
+                    password: document.getElementById('password').value
+                })
+            });
+            const data = await response.json();
+            console.log('Registration response:', data);
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const response = await fetch(API_BASE + 'login/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: document.getElementById('loginUsername').value,
+                    password: document.getElementById('loginPassword').value
+                })
+            });
+            const data = await response.json();
+            console.log('Login response:', data);
+            if (data.access) {
+                localStorage.setItem('accessToken', data.access);
+                localStorage.setItem('refreshToken', data.refresh);
+            }
+        });
+    </script>
+</body>
+</html>
